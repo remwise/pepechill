@@ -1,11 +1,11 @@
 version: '2'
 services:
-  # ui:
-  #   build: ./ui
-  #   ports:
-  #     - '80:80'
-  #   depends_on:
-  #     - api
+  ui:
+    build: ./ui
+    ports:
+       - '3002:80'
+    depends_on:
+       - api
   api:
     build: ./api
     ports:
@@ -15,4 +15,6 @@ services:
   mongo:
     image: mongo
     ports:
-      - '27017:27017'
+      - '2012:27017'
+  janus-gateway:
+    build: ./janus
