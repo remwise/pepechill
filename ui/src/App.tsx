@@ -3,42 +3,27 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import axios from "axios";
 import "./App.css";
+import io from "socket.io-client";
 
-const apiUrl = `http://localhost:8080`;
+const API_URL = `http://localhost:3001`;
+
+const socket = io(API_URL);
 
 const App = () => {
-  const [state, setState] = useState<{ users: { _id: number }[] }>({
-    users: [],
-  });
-
-  const createUser = async () => {
-    await axios.get(apiUrl + "/user-create");
-    loadUsers();
-  };
-
-  const loadUsers = async () => {
-    const res = await axios.get(apiUrl + "/users");
-    setState({
-      users: res.data,
-    });
-  };
-
   useEffect(() => {
-    loadUsers();
+    socket.emit("send data", { data: "tmp" });
   }, []);
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <button onClick={() => createUser()}>Create User</button>
-        <p>Users list:</p>
-        <ul>
-          {state.users.map((user) => (
-            <li key={user._id}>id: {user._id}</li>
-          ))}
-        </ul>
-      </header>
+      <video autoPlay={true} id="vid" style={{ display: "none" }}></video>
+      <canvas
+        id="canvas"
+        width="640"
+        height="480"
+        style={{ border: "1px solid #d3d3d3" }}
+      ></canvas>
+      <br></br>
     </div>
   );
 };

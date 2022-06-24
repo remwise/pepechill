@@ -1,10 +1,20 @@
+const PORT = 3001;
+const ALLOWED_ORIGIN = "http://localhost:3000";
+
 const express = require("express");
 const app = express();
 // const connectDb = require("./src/connection");
 // const User = require("./src/models/User.model");
-const cors = require("cors");
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
 
-const PORT = 8080;
+const io = new Server(server, {
+  cors: ALLOWED_ORIGIN,
+  serveClient: false,
+});
+
+const cors = require("cors");
 app.use(cors());
 
 // app.get("/users", async (req, res) => {
@@ -21,8 +31,20 @@ app.use(cors());
 //   res.send("User created \n");
 // });
 
-app.listen(PORT, function () {
-  console.log(`Listening on ${PORT}`);
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("send data", () => {
+    console.log("send data");
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`listening on *:${PORT}`);
 
   // connectDb().then(() => {
   //   console.log("MongoDb connected");
