@@ -11,7 +11,8 @@ const socket = io(API_URL);
 
 const App = () => {
   useEffect(() => {
-    socket.emit("send data", { data: "tmp" });
+    // socket.emit("send data", { data: "tmp" });
+    axios.post(`${API_URL}/user`, { username: "tmp2" });
   }, []);
 
   return (

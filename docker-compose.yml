@@ -6,12 +6,12 @@ services:
   #     - '80:80'
   #   depends_on:
   #     - api
-  api:
-    build: ./api
-    ports:
-      - '8080:8080'
-    depends_on:
-      - mongo
+  # api:
+  #   build: ./api
+  #   ports:
+  #     - '8080:8080'
+  #   depends_on:
+  #     - mongo
   mongo:
     image: mongo
     ports:
