@@ -110,49 +110,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                     print(counter)
             except:
                 pass
-        case "push-ups":
-            # Extract landmarks push-ups
-            try:
-                landmarks = results.pose_landmarks.landmark
 
-                # Get coordinates
-                shoulder_L = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                              landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-                elbow_L = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
-                           landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-                wrist_L = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
-                           landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-                shoulder_R = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
-                              landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-                elbow_R = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
-                           landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
-                wrist_R = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
-                           landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-                # print(landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].visibility)
-
-                # Calculate angle
-                if landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].visibility > \
-                        landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].visibility:
-                    angle = calculate_angle(shoulder_L, elbow_L, wrist_L)
-                else:
-                    angle = calculate_angle(shoulder_R, elbow_R, wrist_R)
-
-                # Visualize angle
-                cv.putText(image, str(angle),
-                           tuple(np.multiply(elbow_L, [1280, 720]).astype(int)),
-                           cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv.LINE_AA
-                           )
-
-                # Curl counter logic
-                if angle > 160:
-                    stage = "up"
-                if angle < 50 and stage == 'up':
-                    stage = "down"
-                    counter += 1
-                    print(counter)
-
-            except:
-                pass
         case "pull-ups":
             # Extract landmark pull-ups
             try:
@@ -187,21 +145,21 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
     # Render curl counter
     # Setup status box
-    cv.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
+    # cv.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
 
     # Rep data
-    cv.putText(image, 'REPS', (15, 12),
-               cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv.LINE_AA)
-    cv.putText(image, str(counter),
-               (10, 60),
-               cv.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv.LINE_AA)
+    # cv.putText(image, 'REPS', (15, 12),
+    #            cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv.LINE_AA)
+    # cv.putText(image, str(counter),
+    #            (10, 60),
+    #            cv.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv.LINE_AA)
 
     # Stage data
-    cv.putText(image, 'STAGE', (65, 12),
-               cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv.LINE_AA)
-    cv.putText(image, stage,
-               (60, 60),
-               cv.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv.LINE_AA)
+    # cv.putText(image, 'STAGE', (65, 12),
+    #            cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv.LINE_AA)
+    # cv.putText(image, stage,
+    #            (60, 60),
+    #            cv.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv.LINE_AA)
 
     # Render detections
     # mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
