@@ -46,8 +46,8 @@ mp_pose = mp.solutions.pose
 
 counter = 0
 stage = None
-file_name = "1.jpg"
-workout = ""
+file_name = "2.jpg"
+workout = "pull-ups"
 # Setup mediapipe instance
 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
     # i = inotify.adapters.Inotify()
@@ -131,9 +131,10 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 # print(landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].visibility)
 
                 # Calculate angle
-                if landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].visibility > 0.8:
+                if landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].visibility > \
+                        landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].visibility:
                     angle = calculate_angle(shoulder_L, elbow_L, wrist_L)
-                if landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].visibility > 0.8:
+                else:
                     angle = calculate_angle(shoulder_R, elbow_R, wrist_R)
 
                 # Visualize angle
@@ -144,9 +145,9 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
                 # Curl counter logic
                 if angle > 160:
-                    stage = "down"
-                if angle < 40 and stage == 'down':
                     stage = "up"
+                if angle < 50 and stage == 'up':
+                    stage = "down"
                     counter += 1
                     print(counter)
 
@@ -210,7 +211,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
     cv.imshow('Mediapipe Feed', image)
     cv.waitKey(0)
     cv.destroyAllWindows()
-    image.r
+
 
     cv.destroyAllWindows()
 
