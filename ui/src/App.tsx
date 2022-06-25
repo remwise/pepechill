@@ -1,30 +1,11 @@
-import React, { useEffect, useState } from "react";
-// @ts-ignore
-import logo from "./logo.svg";
-import axios from "axios";
-import "./App.css";
-import io from "socket.io-client";
-
-const API_URL = `http://localhost:3001`;
-
-const socket = io(API_URL);
+import { DataProvider } from "./context/context";
+import { Router } from "./router";
 
 const App = () => {
-  useEffect(() => {
-    socket.emit("send data", { data: "tmp" });
-  }, []);
-
   return (
-    <div className="App">
-      <video autoPlay={true} id="vid" style={{ display: "none" }}></video>
-      <canvas
-        id="canvas"
-        width="640"
-        height="480"
-        style={{ border: "1px solid #d3d3d3" }}
-      ></canvas>
-      <br></br>
-    </div>
+    <DataProvider>
+      <Router />
+    </DataProvider>
   );
 };
 

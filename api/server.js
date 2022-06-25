@@ -3,11 +3,13 @@ const ALLOWED_ORIGIN = "http://localhost:3000";
 
 const express = require("express");
 const app = express();
-// const connectDb = require("./src/connection");
-// const User = require("./src/models/User.model");
+
+const connectDb = require("./src/connection");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+
+const userRouter = require("./src/controllers/user");
 
 const io = new Server(server, {
   cors: ALLOWED_ORIGIN,
@@ -17,19 +19,7 @@ const io = new Server(server, {
 const cors = require("cors");
 app.use(cors());
 
-// app.get("/users", async (req, res) => {
-//   const users = await User.find();
-
-//   res.json(users);
-// });
-
-// app.get("/user-create", async (req, res) => {
-//   const user = new User({ username: "userTest" });
-
-//   await user.save().then(() => console.log("User created"));
-
-//   res.send("User created \n");
-// });
+app.use("/user", userRouter);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
@@ -46,7 +36,7 @@ io.on("connection", (socket) => {
 server.listen(PORT, () => {
   console.log(`listening on *:${PORT}`);
 
-  // connectDb().then(() => {
-  //   console.log("MongoDb connected");
-  // });
+  connectDb().then(() => {
+    console.log("MongoDb connected");
+  });
 });
