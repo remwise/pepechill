@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { socket } from '../context';
 
 let ctx: CanvasRenderingContext2D, ctx2: CanvasRenderingContext2D;
@@ -11,6 +12,8 @@ export const Exercise = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasRef2 = useRef<HTMLCanvasElement>(null);
+
+  const { pathname } = useLocation();
 
   let videoStream: MediaStream | null = null;
 
@@ -32,7 +35,7 @@ export const Exercise = () => {
         videoRef.current!.srcObject = stream;
         videoStream = stream;
 
-        socket.emit('blob:start');
+        socket.emit('blob:start', pathname.slice(1));
       });
   }, []);
 

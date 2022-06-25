@@ -1,7 +1,6 @@
 const spawn = require('child_process').spawn;
 const fs = require('fs');
 const path = require('path');
-// const fileTypeFromBuffer = require('file-type').fileTypeFromBuffer;
 
 const ensureDirectoryExistence = (filePath) => {
   var dirname = path.dirname(filePath);
@@ -11,14 +10,6 @@ const ensureDirectoryExistence = (filePath) => {
   fs.mkdirSync(dirname, { recursive: true });
 };
 
-// const blobToBase64 = (blob) => {
-//     return new Promise((resolve, _) => {
-//       const reader = new FileReader();
-//       reader.onloadend = () => resolve(reader.result);
-//       reader.readAsDataURL(blob);
-//     });
-//   }
-
 const socketExecute = (socket) => {
   console.log('a user connected');
   const socketId = socket.id;
@@ -27,31 +18,29 @@ const socketExecute = (socket) => {
 
   ensureDirectoryExistence(imagePath);
   fs.writeFileSync(imagePath, '', () => {});
-  // ! add workout third param
-  const pythonProcess = spawn('python3', ['../../ml/main.py', imageBasePath]);
 
-  pythonProcess.stdout.on('data', (data) => {
-    // Do something with the data returned from python script
-    console.log('data :>> ', data);
+  socket.on('blob', (data) => {
+    const outputFileName = `ml/assets/${socketId}.jpg`;
+
+    fs.writeFileSync(outputFileName, data);
+
+    const read = fs.readFileSync(outputFileName);
+
+    socket.emit('blob:return', read.buffer);
   });
 
-  //   socket.on("send data", async ({ data }) => {
-  // const base64 = await blobToBase64(data);
-  // console.log("send data");
-  // fs.writeFile(`ml/assets/${socketId}.jpeg`, data, () => {});
-  //   });
+  socket.on('blob:start', (workout) => {
+    const pythonProcess = spawn('python3', [
+      '../../ml/main.py',
+      imageBasePath,
+      workout,
+    ]);
 
-   socket.on("blob", (data)=> {
-   const outputFileName = `ml/assets/${socketId}.jpg`;
+    pythonProcess.stdout.on('data', (data) => {
+      // Do something with the data returned from python script
+      console.log('data :>> ', data);
+    });
 
-   fs.writeFileSync(outputFileName, data);
-
-   const read = fs.readFileSync(outputFileName);
-
-   socket.emit('blob:return', read.buffer);
-  })
-
-  socket.on('blob:start', () => {
     socket.emit('blob:start-response');
   });
 

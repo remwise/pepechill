@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 
 const trainingTypes = [
   { type: 'squat', name: 'Приседания' },
-  { type: 'pushUp', name: 'Отжимания' },
   { type: 'pullUp', name: 'Подтягивания' },
 ];
 
