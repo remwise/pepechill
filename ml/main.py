@@ -21,7 +21,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 # VIDEO FEED
-cap = cv.VideoCapture(1)
+cap = cv.VideoCapture(0)
 
 counter = 0
 stage = None
@@ -87,27 +87,9 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
             # Get coordinates
             wrist_L = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-            # wrist_L=np.multiply(wrist_L, 720).astype(int)
-            # print(wrist_L, "кистьЛ")
             wrist_R = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-            # wrist_R = np.multiply(wrist_R, 720).astype(int)
-            # print(wrist_R,"кистьП")
             mouth_R = [landmarks[mp_pose.PoseLandmark.MOUTH_RIGHT.value].y]
-            # mouth_R = np.multiply(mouth_R, 720).astype(int)
-            # print(mouth_R,"рот")
             # print(landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].visibility)
-
-            # Calculate
-            # if landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].visibility > 0.8:
-            #     angle = calculate_angle(shoulder_L, elbow_L, wrist_L)
-            # if landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].visibility > 0.8:
-            #     angle = calculate_angle(shoulder_R, elbow_R, wrist_R)
-
-            # Visualize angle
-            # cv.putText(image, str(mouth_R),
-            #            tuple(np.multiply(wrist_R, [1280, 720]).astype(int)),
-            #            cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv.LINE_AA
-            #            )
 
             # Curl counter logic
             if mouth_R > wrist_R and wrist_L:
