@@ -1,6 +1,7 @@
 const spawn = require("child_process").spawn;
 const fs = require("fs");
 const path = require("path");
+// const fileTypeFromBuffer = require('file-type').fileTypeFromBuffer;
 
 const ensureDirectoryExistence = (filePath) => {
   var dirname = path.dirname(filePath);
@@ -21,13 +22,13 @@ const ensureDirectoryExistence = (filePath) => {
 const socketExecute = (socket) => {
   console.log("a user connected");
   const socketId = socket.id;
-  const imageBasePath = `assets/${socketId}.jpg`;
-  const imagePath = `ml/assets/${socketId}.jpg`;
+  const imageBasePath = `assets/${socketId}.jpeg`;
+  const imagePath = `ml/assets/${socketId}.jpeg`;
 
   ensureDirectoryExistence(imagePath);
   fs.writeFileSync(imagePath, "", () => {});
   // ! add workout third param
-  const pythonProcess = spawn("python", ["../../ml/main.py", imageBasePath]);
+  const pythonProcess = spawn("python3", ["../../ml/main.py", imageBasePath]);
 
   pythonProcess.stdout.on("data", (data) => {
     // Do something with the data returned from python script
@@ -39,6 +40,27 @@ const socketExecute = (socket) => {
   // console.log("send data");
   // fs.writeFile(`ml/assets/${socketId}.jpeg`, data, () => {});
   //   });
+
+  socket.on("blob", (data)=> {
+   const buffer = Buffer.from(data);
+
+   // const fileType = await fileTypeFromBuffer(buffer);
+
+   // if(fileType.ext){
+     const outputFileName = `${socketId}.jpg`
+     fs.createWriteStream(outputFileName).write(buffer);
+   // } else {
+   //   console.log(`Unrecognized filetype`)
+   // }
+
+    // fs.writeFileSync(`ml/assets/${socketId}.jpeg`, blob, () => {});
+
+    socket.emit('blob:return', data);
+  })
+
+  socket.on("blob:start", ( )=> {
+    socket.emit('blob:start-response')
+  })
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
