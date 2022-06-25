@@ -108,6 +108,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                     stage = "up"
                     counter += 1
                     print(counter)
+                    sys.stdout.flush()
             except:
                 pass
 
@@ -127,6 +128,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                     stage = "up"
                     counter += 1
                     print(counter)
+                    sys.stdout.flush()
                 if stage == 'down':
                     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                               mp_drawing.DrawingSpec(color=(28, 149, 51), thickness=2,

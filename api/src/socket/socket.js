@@ -1,4 +1,4 @@
-const { exec } = require("child_process");
+const spawn = require("child_process").spawn;
 const fs = require("fs");
 const path = require("path");
 
@@ -10,37 +10,39 @@ const ensureDirectoryExistence = (filePath) => {
   fs.mkdirSync(dirname, { recursive: true });
 };
 
+// const blobToBase64 = (blob) => {
+//     return new Promise((resolve, _) => {
+//       const reader = new FileReader();
+//       reader.onloadend = () => resolve(reader.result);
+//       reader.readAsDataURL(blob);
+//     });
+//   }
+
 const socketExecute = (socket) => {
   console.log("a user connected");
   const socketId = socket.id;
   const imageBasePath = `assets/${socketId}.jpg`;
-  const resultBasePath = `results/${socketId}.txt`;
   const imagePath = `ml/assets/${socketId}.jpg`;
-  const resultPath = `ml/results/${socketId}.txt`;
 
-  //   ensureDirectoryExistence(imagePath)
-  //   fs.writeFileSync(imagePath, "", () => {});
-  //   ensureDirectoryExistence(resultPath)
-  //   fs.writeFileSync(resultPath, "", () => {});
+  ensureDirectoryExistence(imagePath);
+  fs.writeFileSync(imagePath, "", () => {});
+  // ! add workout third param
+  const pythonProcess = spawn("python", ["../../ml/main.py", imageBasePath]);
 
-  //   fs.watchFile(resultPath, { interval: 1000 }, (curr, prev) => {
-  //     console.log(`${resultPath} file Changed`);
-
-  //     const text = fs.readFileSync(resultPath).toString();
-  //     console.log("text :>> ", text);
-  //   });
-  // ! add workout
-  // exec(`python ../../ml/main.py ${imageBasePath} ${resultBasePath} ${}`);
-
-  socket.on("send data", ({ data }) => {
-    console.log("send data");
-    fs.writeFile(`ml/assets/${socketId}.jpeg`, data, () => {});
+  pythonProcess.stdout.on("data", (data) => {
+    // Do something with the data returned from python script
+    console.log("data :>> ", data);
   });
+
+  //   socket.on("send data", async ({ data }) => {
+  // const base64 = await blobToBase64(data);
+  // console.log("send data");
+  // fs.writeFile(`ml/assets/${socketId}.jpeg`, data, () => {});
+  //   });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
-    // fs.unlink(imagePath, () => {});
-    // fs.unlink(resultPath, () => {});
+    fs.unlink(imagePath, () => {});
   });
 };
 
