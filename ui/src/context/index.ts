@@ -23,7 +23,7 @@ export interface Props {
   children: (renderProps: RenderProps) => React.ReactElement;
 }
 
-const socket = io(API_URL);
+export const socket = io(API_URL);
 
 export const DataComponent: React.FC<Props> = (props) => {
   const [userId, setUserId] = useState<string | null>(
