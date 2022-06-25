@@ -1,5 +1,5 @@
 const PORT = 3001;
-const ALLOWED_ORIGIN = 'http://localhost:3000';
+// const ALLOWED_ORIGIN = 'http://localhost:3000';
 
 const express = require('express');
 const app = express();
@@ -13,7 +13,7 @@ const { Server } = require('socket.io');
 const userRouter = require('./src/controllers/user');
 
 const io = new Server(server, {
-  cors: ALLOWED_ORIGIN,
+  // cors: ALLOWED_ORIGIN,
   serveClient: false,
 });
 

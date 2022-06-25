@@ -1,4 +1,5 @@
 FROM node:8
+FROM python:3.8-slim-buster
 # FROM mhart/alpine-node:14
 # Create app directory
 WORKDIR /usr/src/app
@@ -9,6 +10,8 @@ COPY package*.json yarn.lock ./
 
 # RUN npm install
 RUN yarn --frozen-lockfile
+RUN pip install opencv-python mediapipe
+
 # Copy app source code
 COPY . .
 
