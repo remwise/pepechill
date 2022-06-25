@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { useData } from "../context/useData";
-import { Auth, Home } from "../pages";
+import { Auth, Home, Exercise} from "../pages";
 import { ContentTemplate } from "./content-template";
 
 export const Router = () => {
@@ -15,6 +15,7 @@ export const Router = () => {
       {userId ? (
         <Route path="/" element={<ContentTemplate />}>
           <Route path="/" element={<Home />} />
+          <Route path="/:id" element={<Exercise />} />
         </Route>
       ) : (
         // ! add redirect maybe
