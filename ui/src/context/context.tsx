@@ -14,6 +14,7 @@ export const Context = React.createContext<RenderProps>({
   },
   loadUser: console.log,
   logout: console.log,
+  sendData: console.log,
 });
 
 export const DataProvider: React.FC<Omit<DataProps, "children">> = (props) => (

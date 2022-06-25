@@ -31,10 +31,12 @@ def calculate_angle(a, b, c):
 #     img = skimage.io.imread(imgdata, plugin='imageio')
 #     return img
 
-# img_data = sys.argv[1]
-# img_data = open('1.txt', 'r')
-# image = base64.de(img_data)
-image = cv.imread("1.jpg")
+file_name = sys.argv[1]
+result = sys.argv[2]
+# workout = sys.argv[3]
+workout="pull-ups"
+
+image = cv.imread(file_name)
 cv.imshow("i", image)
 cv.waitKey(0)
 cv.destroyAllWindows()
@@ -46,8 +48,6 @@ mp_pose = mp.solutions.pose
 
 counter = 0
 stage = None
-file_name = "2.jpg"
-workout = "pull-ups"
 # Setup mediapipe instance
 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
     # i = inotify.adapters.Inotify()

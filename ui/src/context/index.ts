@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import io from "socket.io-client";
+import { API_URL } from "../constants";
 import { axiosInstance } from "../request";
 
 export type User = {
@@ -14,11 +16,14 @@ export interface RenderProps {
   state: State;
   loadUser: (username: string) => void;
   logout: () => void;
+  sendData: (data: any) => void;
 }
 
 export interface Props {
   children: (renderProps: RenderProps) => React.ReactElement;
 }
+
+const socket = io(API_URL);
 
 export const DataComponent: React.FC<Props> = (props) => {
   const [userId, setUserId] = useState<string | null>(
@@ -52,14 +57,14 @@ export const DataComponent: React.FC<Props> = (props) => {
     setUserData({ userId: null, username: null });
   };
 
-  //   const sendData = () => {
-  //     // const socket = io(API_URL);
-  //     // socket.emit("send data", { data: "tmp" });
-  //   };
+  const sendData = (data: any) => {
+    socket.emit("send data", { data });
+  };
 
   return props.children({
     state: { userId, username, isLoadingUser },
     loadUser,
     logout,
+    sendData,
   });
 };
