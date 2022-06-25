@@ -13,7 +13,10 @@ router.post("/", jsonParser, async (req, res, next) => {
     const user = await User.findOne({ username });
 
     if (user) {
-      res.send(user._id);
+      res.send({
+        userId: user._id,
+        username: user.username,
+      });
       return;
     }
 
@@ -21,7 +24,10 @@ router.post("/", jsonParser, async (req, res, next) => {
 
     try {
       await newUser.save().then(() => console.log(`User ${username} created`));
-      res.send(newUser._id);
+      res.send({
+        userId: user._id,
+        username: user.username,
+      });
       return;
     } catch (error) {
       console.log("error :>> ", error);
