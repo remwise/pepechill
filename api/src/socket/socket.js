@@ -22,8 +22,8 @@ const ensureDirectoryExistence = (filePath) => {
 const socketExecute = (socket) => {
   console.log("a user connected");
   const socketId = socket.id;
-  const imageBasePath = `assets/${socketId}.jpeg`;
-  const imagePath = `ml/assets/${socketId}.jpeg`;
+  const imageBasePath = `assets/${socketId}.jpg`;
+  const imagePath = `ml/assets/${socketId}.jpg`;
 
   ensureDirectoryExistence(imagePath);
   fs.writeFileSync(imagePath, "", () => {});
@@ -44,18 +44,11 @@ const socketExecute = (socket) => {
   socket.on("blob", (data)=> {
    const buffer = Buffer.from(data);
 
-   // const fileType = await fileTypeFromBuffer(buffer);
+   const outputFileName = `ml/assets/${socketId}.jpg`;
 
-   // if(fileType.ext){
-     const outputFileName = `${socketId}.jpg`
-     fs.createWriteStream(outputFileName).write(buffer);
-   // } else {
-   //   console.log(`Unrecognized filetype`)
-   // }
+   fs.createWriteStream(outputFileName).write(buffer);
 
-    // fs.writeFileSync(`ml/assets/${socketId}.jpeg`, blob, () => {});
-
-    socket.emit('blob:return', data);
+   socket.emit('blob:return', data);
   })
 
   socket.on("blob:start", ( )=> {
