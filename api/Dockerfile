@@ -1,6 +1,5 @@
-FROM node:8
-FROM python:3.8-slim-buster
-# FROM mhart/alpine-node:14
+FROM nikolaik/python-nodejs
+
 # Create app directory
 WORKDIR /usr/src/app
 # Install app dependencies
