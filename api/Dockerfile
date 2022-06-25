@@ -9,7 +9,7 @@ COPY package*.json yarn.lock ./
 
 # RUN npm install
 RUN yarn --frozen-lockfile
-RUN pip install opencv-python mediapipe
+RUN pip install opencv-python mediapipe inotify
 
 # Copy app source code
 COPY . .

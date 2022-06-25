@@ -19,12 +19,13 @@ def calculate_angle(a, b, c):
 
     return angle
 
-file_name = sys.argv[1]
-# workout = sys.argv[2]
-workout="pull-ups"
+socket_id = sys.argv[1]
+workout = sys.argv[2]
+
+file_name = 'assets/' + socket_id + '.jpg'
 
 image = cv.imread(file_name)
-cv.imshow("i", image)
+# cv.imshow("i", image)
 cv.waitKey(0)
 cv.destroyAllWindows()
 mp_drawing = mp.solutions.drawing_utils
@@ -130,9 +131,10 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                     except:
                         pass
 
-                cv.imshow('Mediapipe Feed', image)
-                cv.waitKey(0)
-                cv.destroyAllWindows()
+                # cv.imshow('Mediapipe Feed', image)
+                cv.imwrite('assets/res-' + socket_id + '.jpg', image)
+                # cv.waitKey(0)
+                # cv.destroyAllWindows()
 
 
                 cv.destroyAllWindows()

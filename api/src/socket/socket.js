@@ -13,28 +13,30 @@ const ensureDirectoryExistence = (filePath) => {
 const socketExecute = (socket) => {
   console.log('a user connected');
   const socketId = socket.id;
-  const imageBasePath = `assets/${socketId}.jpg`;
   const imagePath = `ml/assets/${socketId}.jpg`;
+  const resPath = `ml/assets/res-${socketId}.jpg`;
+  let pythonProcess;
 
   ensureDirectoryExistence(imagePath);
+  ensureDirectoryExistence(resPath);
+
   fs.writeFileSync(imagePath, '', () => {});
+  fs.writeFileSync(resPath, '', () => {});
 
   socket.on('blob', (data) => {
-    const outputFileName = `ml/assets/${socketId}.jpg`;
+    fs.writeFileSync(imagePath, data);
+  });
 
-    fs.writeFileSync(outputFileName, data);
+  fs.watchFile(resPath, (curr, prev) => {
+    console.log(`${resPath} file Changed`);
 
-    const read = fs.readFileSync(outputFileName);
+    const read = fs.readFileSync(resPath);
 
     socket.emit('blob:return', read.buffer);
   });
 
   socket.on('blob:start', (workout) => {
-    const pythonProcess = spawn('python3', [
-      '../../ml/main.py',
-      imageBasePath,
-      workout,
-    ]);
+    pythonProcess = spawn('python3', ['../../ml/main.py', socketId, workout]);
 
     pythonProcess.stdout.on('data', (data) => {
       // Do something with the data returned from python script
@@ -46,7 +48,9 @@ const socketExecute = (socket) => {
 
   socket.on('disconnect', () => {
     console.log('user disconnected');
+    pythonProcess?.kill();
     fs.unlink(imagePath, () => {});
+    fs.unlink(resPath, () => {});
   });
 };
 
