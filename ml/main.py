@@ -1,6 +1,7 @@
 import cv2 as cv
 import mediapipe as mp
 import numpy as np
+import sys
 
 
 def calculate_angle(a, b, c):
@@ -16,6 +17,7 @@ def calculate_angle(a, b, c):
 
     return angle
 
+base64 = sys.argv[1]
 
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose

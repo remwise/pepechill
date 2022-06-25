@@ -5,6 +5,7 @@ const express = require("express");
 const app = express();
 
 const connectDb = require("./src/connection");
+const socketExecute = require("./src/socket/socket");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -21,17 +22,7 @@ app.use(cors());
 
 app.use("/user", userRouter);
 
-io.on("connection", (socket) => {
-  console.log("a user connected");
-
-  socket.on("send data", () => {
-    console.log("send data");
-  });
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
+io.on("connection", socketExecute);
 
 server.listen(PORT, () => {
   console.log(`listening on *:${PORT}`);
