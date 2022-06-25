@@ -41,14 +41,14 @@ const socketExecute = (socket) => {
   // fs.writeFile(`ml/assets/${socketId}.jpeg`, data, () => {});
   //   });
 
-  socket.on("blob", (data)=> {
-   const buffer = Buffer.from(data);
-
+   socket.on("blob", (data)=> {
    const outputFileName = `ml/assets/${socketId}.jpg`;
 
-   fs.createWriteStream(outputFileName).write(buffer);
+   fs.writeFileSync(outputFileName, data);
 
-   socket.emit('blob:return', data);
+   const read = fs.readFileSync(outputFileName);
+
+   socket.emit('blob:return', read.buffer);
   })
 
   socket.on("blob:start", ( )=> {
