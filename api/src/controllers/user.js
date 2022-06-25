@@ -1,12 +1,12 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-const User = require("../models/User.model");
+const User = require('../models/User.model');
 
-router.post("/", jsonParser, async (req, res, next) => {
+router.post('/', jsonParser, async (req, res, next) => {
   const username = req.body?.username;
 
   if (username) {
@@ -32,12 +32,12 @@ router.post("/", jsonParser, async (req, res, next) => {
       });
       return;
     } catch (error) {
-      console.log("error :>> ", error);
-      res.status(500).send("Error!");
+      console.log('error :>> ', error);
+      res.status(500).send('Error!');
     }
   }
-  console.log("empty username");
-  res.status(500).send("Error!");
+  console.log('empty username');
+  res.status(500).send('Error!');
 });
 
 module.exports = router;

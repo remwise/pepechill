@@ -1,5 +1,5 @@
-import { Outlet } from "react-router-dom";
-import { useData } from "../context/useData";
+import { Outlet } from 'react-router-dom';
+import { useData } from '../context/useData';
 
 export const ContentTemplate = () => {
   const { logout, sendData } = useData();
@@ -13,7 +13,7 @@ export const ContentTemplate = () => {
         id="file"
         onChange={(event) => {
           const file = event.target.files?.[0];
-          console.log("file :>> ", file);
+          console.log('file :>> ', file);
           sendData(file);
         }}
       />

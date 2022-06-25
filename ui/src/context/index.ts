@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import io from "socket.io-client";
-import { API_URL } from "../constants";
-import { axiosInstance } from "../request";
+import React, { useState } from 'react';
+import io from 'socket.io-client';
+import { API_URL } from '../constants';
+import { axiosInstance } from '../request';
 
 export type User = {
   userId: null | string;
@@ -27,27 +27,27 @@ const socket = io(API_URL);
 
 export const DataComponent: React.FC<Props> = (props) => {
   const [userId, setUserId] = useState<string | null>(
-    localStorage.getItem("userId") || null
+    localStorage.getItem('userId') || null,
   );
   const [username, setUsername] = useState<string | null>(
-    localStorage.getItem("username") || null
+    localStorage.getItem('username') || null,
   );
   const [isLoadingUser, setIsLoadingUser] = useState(false);
 
   const setUserData = (user: User) => {
     setUserId(user.userId);
     setUsername(user.username);
-    localStorage.setItem("userId", user.userId || "");
-    localStorage.setItem("username", user.username || "");
+    localStorage.setItem('userId', user.userId || '');
+    localStorage.setItem('username', user.username || '');
   };
 
   const loadUser = async (username: string) => {
     try {
       setIsLoadingUser(true);
-      const user: User = (await axiosInstance.post("user", { username })).data;
+      const user: User = (await axiosInstance.post('user', { username })).data;
       setUserData(user);
     } catch (error) {
-      console.log("error :>> ", error);
+      console.log('error :>> ', error);
     } finally {
       setIsLoadingUser(false);
     }
@@ -58,7 +58,7 @@ export const DataComponent: React.FC<Props> = (props) => {
   };
 
   const sendData = (data: any) => {
-    socket.emit("send data", { data });
+    socket.emit('send data', { data });
   };
 
   return props.children({

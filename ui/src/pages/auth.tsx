@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
-import { useData } from "../context/useData";
+import { useCallback, useState } from 'react';
+import { useData } from '../context/useData';
 
 export const Auth = () => {
   const { loadUser } = useData();
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
 
   const onChange = useCallback((event) => {
     setText(event.target.value);
@@ -14,7 +14,7 @@ export const Auth = () => {
       event.preventDefault();
       loadUser(text);
     },
-    [loadUser, text]
+    [loadUser, text],
   );
 
   return (

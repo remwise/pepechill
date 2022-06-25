@@ -1,7 +1,7 @@
-import { Route, Routes } from "react-router-dom";
-import { useData } from "../context/useData";
-import { Auth, Home, Exercise} from "../pages";
-import { ContentTemplate } from "./content-template";
+import { Route, Routes } from 'react-router-dom';
+import { useData } from '../context/useData';
+import { Auth, Home, Exercise } from '../pages';
+import { ContentTemplate } from './content-template';
 
 export const Router = () => {
   const {

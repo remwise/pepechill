@@ -1,5 +1,5 @@
-import { DataProvider } from "./context/context";
-import { Router } from "./router";
+import { DataProvider } from './context/context';
+import { Router } from './router';
 
 const App = () => {
   return (

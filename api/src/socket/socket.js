@@ -1,6 +1,6 @@
-const spawn = require("child_process").spawn;
-const fs = require("fs");
-const path = require("path");
+const spawn = require('child_process').spawn;
+const fs = require('fs');
+const path = require('path');
 // const fileTypeFromBuffer = require('file-type').fileTypeFromBuffer;
 
 const ensureDirectoryExistence = (filePath) => {
@@ -20,19 +20,19 @@ const ensureDirectoryExistence = (filePath) => {
 //   }
 
 const socketExecute = (socket) => {
-  console.log("a user connected");
+  console.log('a user connected');
   const socketId = socket.id;
   const imageBasePath = `assets/${socketId}.jpg`;
   const imagePath = `ml/assets/${socketId}.jpg`;
 
   ensureDirectoryExistence(imagePath);
-  fs.writeFileSync(imagePath, "", () => {});
+  fs.writeFileSync(imagePath, '', () => {});
   // ! add workout third param
-  const pythonProcess = spawn("python3", ["../../ml/main.py", imageBasePath]);
+  const pythonProcess = spawn('python3', ['../../ml/main.py', imageBasePath]);
 
-  pythonProcess.stdout.on("data", (data) => {
+  pythonProcess.stdout.on('data', (data) => {
     // Do something with the data returned from python script
-    console.log("data :>> ", data);
+    console.log('data :>> ', data);
   });
 
   //   socket.on("send data", async ({ data }) => {
@@ -41,22 +41,22 @@ const socketExecute = (socket) => {
   // fs.writeFile(`ml/assets/${socketId}.jpeg`, data, () => {});
   //   });
 
-  socket.on("blob", (data)=> {
-   const buffer = Buffer.from(data);
+  socket.on('blob', (data) => {
+    const buffer = Buffer.from(data);
 
-   const outputFileName = `ml/assets/${socketId}.jpg`;
+    const outputFileName = `ml/assets/${socketId}.jpg`;
 
-   fs.createWriteStream(outputFileName).write(buffer);
+    fs.createWriteStream(outputFileName).write(buffer);
 
-   socket.emit('blob:return', data);
-  })
+    socket.emit('blob:return', data);
+  });
 
-  socket.on("blob:start", ( )=> {
-    socket.emit('blob:start-response')
-  })
+  socket.on('blob:start', () => {
+    socket.emit('blob:start-response');
+  });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
     fs.unlink(imagePath, () => {});
   });
 };
