@@ -34,15 +34,12 @@ export class Exercise extends React.Component<any, IExerciseState> {
     public canvasRef: React.RefObject<HTMLCanvasElement>
     public canvasRef2: React.RefObject<HTMLCanvasElement>
 
-    public videoStyle = {
-        display: 'block'
+    public hiddenStyle = {
+        display: 'none'
     }
 
     public ctx?:CanvasRenderingContext2D;
     public ctx2?:CanvasRenderingContext2D;
-
-    public queueOut: Blob[] = [];
-    public queueIn: Blob[] = [];
 
     public socket: Socket
 
@@ -57,6 +54,7 @@ export class Exercise extends React.Component<any, IExerciseState> {
         this.socket = io('ws://localhost:3001');
 
         this.socket.on('blob:return', (data)=>this.onBlob(data, this.ctx2!))
+        this.socket.on('blob:start-response', ()=>this.snapshot())
     }
 
     componentDidMount() {
@@ -74,9 +72,7 @@ export class Exercise extends React.Component<any, IExerciseState> {
             this.videoRef.current!.srcObject = stream;
             this.videoStream = stream;
 
-            setInterval(()=>{
-                this.snapshot();
-            }, 50 )
+            this.socket.emit('blob:start')
         })
     }
 
@@ -86,7 +82,6 @@ export class Exercise extends React.Component<any, IExerciseState> {
                 this.ctx!.drawImage(this.videoRef.current as HTMLVideoElement, 0, 0)
 
                 this.canvasRef.current!.toBlob((blob)=>{
-
                     this.sendIo(blob!);
                 })
             } catch (error) {}
@@ -105,9 +100,12 @@ export class Exercise extends React.Component<any, IExerciseState> {
     onBlob (data: ArrayBuffer, ctx: CanvasRenderingContext2D) {
         console.log(new Blob([data]), 'onBlob');
         const blob = new Blob([data])
+
         createImageBitmap(blob).then(img => {
 
             ctx.drawImage(img, 0,0)
+
+            this.snapshot()
         })
     }
 
@@ -115,8 +113,8 @@ export class Exercise extends React.Component<any, IExerciseState> {
     render() {
         return (
             <div>
-                <video autoPlay ref={ this.videoRef } style={ this.videoStyle }></video>
-                <canvas ref={ this.canvasRef } id="canvas" width="640" height="480" ></canvas>
+                <video autoPlay ref={ this.videoRef } style={ this.hiddenStyle }></video>
+                <canvas ref={ this.canvasRef } id="canvas" style={ this.hiddenStyle } width="640" height="480" ></canvas>
                 <canvas ref={ this.canvasRef2 } id="canvas2" width="640" height="480"></canvas>
             </div>
         )

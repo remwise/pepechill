@@ -35,6 +35,10 @@ io.on("connection", (socket) => {
   socket.on("blob", (data)=> {
     socket.emit('blob:return', data);
   })
+
+  socket.on("blob:start", ( )=> {
+    socket.emit('blob:start-response')
+  })
 });
 
 server.listen(PORT, () => {
