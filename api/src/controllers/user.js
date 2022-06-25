@@ -23,10 +23,12 @@ router.post("/", jsonParser, async (req, res, next) => {
     const newUser = new User({ username });
 
     try {
-      await newUser.save().then(() => console.log(`User ${username} created`));
-      res.send({
-        userId: user._id,
-        username: user.username,
+      await newUser.save().then((data) => {
+        console.log(`User ${username} created`);
+        res.send({
+          userId: data._id,
+          username: data.username,
+        });
       });
       return;
     } catch (error) {
