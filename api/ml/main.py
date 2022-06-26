@@ -1,7 +1,7 @@
 import cv2 as cv
 import mediapipe as mp
 import numpy as np
-import inotify.adapters
+# import inotify.adapters
 import sys
 import base64
 
@@ -22,6 +22,9 @@ def calculate_angle(a, b, c):
 socket_id = sys.argv[1]
 workout = sys.argv[2]
 
+print('start')
+sys.stdout.flush()
+
 file_name = 'assets/' + socket_id + '.jpg'
 
 image = cv.imread(file_name)
@@ -38,105 +41,106 @@ counter = 0
 stage = None
 # Setup mediapipe instance
 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
-    i = inotify.adapters.Inotify()
-    i.add_watch(file_name)
+    # i = inotify.adapters.Inotify()
+    # i.add_watch(file_name)
 
-    try:
-        for event in i.event_gen():
-            if event is not None:
-                (header, type_names, watch_path, filename) = event
-                frame = cv.imread(file_name)
+    # try:
+    #     for event in i.event_gen():
+    #         if event is not None:
+    #             (header, type_names, watch_path, filename) = event
+    while True:
+        frame = cv.imread(file_name)
 
-                # Recolor image to RGB
-                image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-                image.flags.writeable = False
+        # Recolor image to RGB
+        image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        image.flags.writeable = False
 
-                # Make detection
-                results = pose.process(image)
+        # Make detection
+        results = pose.process(image)
 
-                # Recolor back to BGR
-                image.flags.writeable = True
-                image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
+        # Recolor back to BGR
+        image.flags.writeable = True
+        image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
 
-                if workout == "squat":
-                    # Extract landmarks squat
-                    try:
-                        landmarks = results.pose_landmarks.landmark
+        if workout == "squat":
+            # Extract landmarks squat
+            try:
+                landmarks = results.pose_landmarks.landmark
 
-                        # get coordinates
-                        right_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
-                                    landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
-                        right_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
-                                    landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-                        right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
-                                    landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
+                # get coordinates
+                right_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
+                            landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
+                right_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
+                            landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
+                right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
+                            landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
 
-                        angle = calculate_angle(right_ankle, right_knee, right_hip)
+                angle = calculate_angle(right_ankle, right_knee, right_hip)
 
-                        # Curl counter logic
-                        if angle < 100:
-                            stage = "down"
-                            # render detection
-                            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                                    mp_drawing.DrawingSpec(color=(120, 200, 80), thickness=2,
-                                                                            circle_radius=5),
-                                                    mp_drawing.DrawingSpec(color=(120, 200, 80), thickness=2,
-                                                                            circle_radius=10))
+                # Curl counter logic
+                if angle < 100:
+                    stage = "down"
+                    # render detection
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                            mp_drawing.DrawingSpec(color=(120, 200, 80), thickness=2,
+                                                                    circle_radius=5),
+                                            mp_drawing.DrawingSpec(color=(120, 200, 80), thickness=2,
+                                                                    circle_radius=10))
 
-                        if angle > 105:
-                            # render detection
-                            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                                    mp_drawing.DrawingSpec(color=(0, 216, 255), thickness=2,
-                                                                            circle_radius=5),
-                                                    mp_drawing.DrawingSpec(color=(0, 216, 255), thickness=2,
-                                                                            circle_radius=10))
+                if angle > 105:
+                    # render detection
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                            mp_drawing.DrawingSpec(color=(0, 216, 255), thickness=2,
+                                                                    circle_radius=5),
+                                            mp_drawing.DrawingSpec(color=(0, 216, 255), thickness=2,
+                                                                    circle_radius=10))
 
-                        if angle > 105 and stage == 'down':
-                            stage = "up"
-                            counter += 1
-                            print(counter)
-                            sys.stdout.flush()
-                    except:
-                        pass
+                if angle > 105 and stage == 'down':
+                    stage = "up"
+                    counter += 1
+                    print(counter)
+                    sys.stdout.flush()
+            except:
+                pass
 
-                if workout == "pullUp":
-                    # Extract landmark pull-ups
-                    try:
-                        landmarks = results.pose_landmarks.landmark
-                        # Get coordinates
-                        wrist_L = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-                        wrist_R = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-                        mouth_R = [landmarks[mp_pose.PoseLandmark.MOUTH_RIGHT.value].y]
-                        # print(landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].visibility)
-                        # Curl counter logic
-                        if mouth_R > wrist_R and wrist_L:
-                            stage = "down"
-                        if mouth_R < wrist_R and wrist_L and stage == 'down':
-                            stage = "up"
-                            counter += 1
-                            print(counter)
-                            sys.stdout.flush()
-                        if stage == 'down':
-                            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                                    mp_drawing.DrawingSpec(color=(28, 149, 51), thickness=2,
-                                                                            circle_radius=2),
-                                                    mp_drawing.DrawingSpec(color=(32, 32, 156), thickness=2,
-                                                                            circle_radius=2)
-                                                    )
-                        if stage == 'up':
-                            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                                    mp_drawing.DrawingSpec(color=(0, 0, 0), thickness=2, circle_radius=2),
-                                                    mp_drawing.DrawingSpec(color=(0, 0, 0), thickness=2, circle_radius=2)
-                                                    )
-                    except:
-                        pass
+        if workout == "pullUp":
+            # Extract landmark pull-ups
+            try:
+                landmarks = results.pose_landmarks.landmark
+                # Get coordinates
+                wrist_L = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+                wrist_R = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+                mouth_R = [landmarks[mp_pose.PoseLandmark.MOUTH_RIGHT.value].y]
+                # print(landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].visibility)
+                # Curl counter logic
+                if mouth_R > wrist_R and wrist_L:
+                    stage = "down"
+                if mouth_R < wrist_R and wrist_L and stage == 'down':
+                    stage = "up"
+                    counter += 1
+                    print(counter)
+                    sys.stdout.flush()
+                if stage == 'down':
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                            mp_drawing.DrawingSpec(color=(28, 149, 51), thickness=2,
+                                                                    circle_radius=2),
+                                            mp_drawing.DrawingSpec(color=(32, 32, 156), thickness=2,
+                                                                    circle_radius=2)
+                                            )
+                if stage == 'up':
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                            mp_drawing.DrawingSpec(color=(0, 0, 0), thickness=2, circle_radius=2),
+                                            mp_drawing.DrawingSpec(color=(0, 0, 0), thickness=2, circle_radius=2)
+                                            )
+            except:
+                pass
 
-                # cv.imshow('Mediapipe Feed', image)
-                cv.imwrite('assets/res-' + socket_id + '.jpg', image)
-                # cv.waitKey(0)
-                # cv.destroyAllWindows()
+        # cv.imshow('Mediapipe Feed', image)
+        cv.imwrite('assets/res-' + socket_id + '.jpg', image)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
 
 
-                cv.destroyAllWindows()
-    finally:
-        i.remove_watch(file_name)
+        cv.destroyAllWindows()
+    # finally:
+    #     i.remove_watch(file_name)

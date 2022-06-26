@@ -29,7 +29,7 @@ const socketExecute = (socket) => {
 
   fs.watchFile(resPath, (curr, prev) => {
     console.log(`${resPath} file Changed`);
-
+    console.log('curr.isFile() :>> ', curr.isFile());
     if (curr.isFile()) {
       const read = fs.readFileSync(resPath);
 
@@ -38,7 +38,7 @@ const socketExecute = (socket) => {
   });
 
   socket.on('blob:start', (workout) => {
-    pythonProcess = spawn('python3', ['../../ml/main.py', socketId, workout]);
+    pythonProcess = spawn('python', ['ml/main.py', socketId, workout]);
 
     pythonProcess.stdout.on('data', (data) => {
       // Do something with the data returned from python script
