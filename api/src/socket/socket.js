@@ -30,9 +30,11 @@ const socketExecute = (socket) => {
   fs.watchFile(resPath, (curr, prev) => {
     console.log(`${resPath} file Changed`);
 
-    const read = fs.readFileSync(resPath);
+    if (curr.isFile()) {
+      const read = fs.readFileSync(resPath);
 
-    socket.emit('blob:return', read.buffer);
+      socket.emit('blob:return', read.buffer);
+    }
   });
 
   socket.on('blob:start', (workout) => {

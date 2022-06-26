@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import io from 'socket.io-client';
-import { WS_API_URL } from '../constants';
+import { API_URL } from '../constants';
 import { axiosInstance } from '../request';
 
 export type User = {
@@ -23,7 +23,7 @@ export interface Props {
   children: (renderProps: RenderProps) => React.ReactElement;
 }
 
-export const socket = io(WS_API_URL);
+export const socket = io(API_URL);
 
 export const DataComponent: React.FC<Props> = (props) => {
   const [userId, setUserId] = useState<string | null>(
