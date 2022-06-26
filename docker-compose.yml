@@ -12,7 +12,15 @@ services:
       - '8080:8080'
     depends_on:
       - mongo
+    networks:
+      - lib_api
   mongo:
     image: mongo
     ports:
-      - '27018:27017'
+      - '27017:27017'
+    networks:
+      - lib_api
+
+networks:
+  lib_api:
+    driver: bridge
